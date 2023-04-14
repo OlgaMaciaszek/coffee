@@ -10,11 +10,6 @@
         <module name="waiter" />
       </profile>
     </annotationProcessing>
-    <bytecodeTargetLevel>
-      <module name="barista" target="17" />
-      <module name="coffee" target="1.5" />
-      <module name="waiter" target="17" />
-    </bytecodeTargetLevel>
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
