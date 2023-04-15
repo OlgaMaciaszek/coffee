@@ -5,6 +5,8 @@ package io.spring.barcelona.coffee.barista.coffee;
  */
 public class Coffee {
 
+
+
 	public static Coffee espresso() {
 		return new Traditional("Espresso", 30);
 	}

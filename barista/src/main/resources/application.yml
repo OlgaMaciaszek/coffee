@@ -1,4 +1,7 @@
+#    FIXME
 spring:
+  main:
+    allow-circular-references: true
   kafka:
     producer:
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer

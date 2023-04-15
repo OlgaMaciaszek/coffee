@@ -1,6 +1,10 @@
 package io.spring.barcelona.coffee.waiter;
 
 import io.spring.barcelona.coffee.waiter.orders.Order;
+import io.spring.barcelona.coffee.waiter.orders.OrderEntry;
+import io.spring.barcelona.coffee.waiter.service.Serving;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.kafka.clients.admin.NewTopic;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,6 +13,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.support.converter.RecordMessageConverter;
 import org.springframework.kafka.support.converter.StringJsonMessageConverter;
@@ -19,6 +24,8 @@ import org.springframework.web.bind.annotation.RestController;
 @SpringBootApplication
 @RestController
 public class WaiterApplication {
+
+	private static final Log LOG = LogFactory.getLog(WaiterApplication.class);
 
 	@Autowired
 	private KafkaTemplate<Object, Object> template;
@@ -37,9 +44,21 @@ public class WaiterApplication {
 		return new StringJsonMessageConverter();
 	}
 
+	@Bean
+	NewTopic servings() {
+		return new NewTopic("servings", 1, (short) 1);
+	}
+
+	@KafkaListener(id = "waiter", topics = "servings")
+	public void listen(Serving serving) {
+		LOG.info(serving);
+	}
+
 	@PostMapping("/order/{name}/{count}")
 	ResponseEntity<Void> order(@PathVariable("name") String beverageName, @PathVariable int count) {
-		template.send("orders", new Order(beverageName, count));
+		Order order = new Order();
+		order.add(new OrderEntry(beverageName, count));
+		template.send("orders", order);
 		return ResponseEntity.status(HttpStatus.CREATED).build();
 	}
 

@@ -1,32 +1,20 @@
 package io.spring.barcelona.coffee.barista.orders;
 
+import java.util.HashSet;
+import java.util.Set;
+
 /**
  * @author Olga Maciaszek-Sharma
  */
 public class Order {
 
-	private String beverageName;
+	private Set<OrderEntry> entries = new HashSet<>();
 
-	private int count;
-
-	public Order(String beverageName, int count) {
-		this.beverageName = beverageName;
-		this.count = count;
+	public void add(OrderEntry orderEntry) {
+		entries.add(orderEntry);
 	}
 
-	public String getBeverageName() {
-		return beverageName;
-	}
-
-	public void setBeverageName(String beverageName) {
-		this.beverageName = beverageName;
-	}
-
-	public int getCount() {
-		return count;
-	}
-
-	public void setCount(int count) {
-		this.count = count;
+	public Set<OrderEntry> getEntries() {
+		return entries;
 	}
 }
