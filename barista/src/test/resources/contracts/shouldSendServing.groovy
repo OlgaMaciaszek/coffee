@@ -11,6 +11,6 @@ Contract.make {
 	}
 	outputMessage {
 		sentTo("servings")
-		body("{\"coffees\":[{\"name\":\"V60\",\"coffeeContent\":500,\"device\":\"V60\"},{\"name\":\"Latte\",\"coffeeContent\":60,\"steamedMilkContent\":180,\"milkFoamContent\":5}]}")
+		body('{"coffees":[{"name":"V60","coffeeContent":500,"device":"V60"},{"name":"Latte","coffeeContent":60,"steamedMilkContent":180,"milkFoamContent":5}]}')
 	}
 }

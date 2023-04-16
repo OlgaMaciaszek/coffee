@@ -42,7 +42,7 @@ import org.springframework.test.context.DynamicPropertySource;
 /**
  * @author Olga Maciaszek-Sharma
  */
-@SpringBootTest(classes = {BaristaApplication.class, BaseTestClass.TestConfig.class})
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE, classes = {BaristaApplication.class, BaseTestClass.TestConfig.class})
 @Testcontainers
 @AutoConfigureMessageVerifier
 @ActiveProfiles("test")

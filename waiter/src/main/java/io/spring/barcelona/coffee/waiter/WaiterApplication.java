@@ -49,10 +49,21 @@ public class WaiterApplication {
 		return new NewTopic("servings", 1, (short) 1);
 	}
 
-	@KafkaListener(id = "waiter", topics = "servings")
-	public void listen(Serving serving) {
-		LOG.info("Here  you are: " + serving);
+	@Bean
+	NewTopic errors() {
+		return new NewTopic("errors", 1, (short) 1);
 	}
+
+	@KafkaListener(id = "waiterServings", topics = "servings")
+	public void listen(Serving serving) {
+		LOG.info("Here you are: " + serving);
+	}
+
+	@KafkaListener(id = "waiterException", topics = "errors")
+	public void errors(Exception exception) {
+		LOG.info("We apologise : " + exception.getMessage());
+	}
+
 
 	@PostMapping("/order/{name}/{count}")
 	ResponseEntity<Void> order(@PathVariable("name") String beverageName, @PathVariable int count) {

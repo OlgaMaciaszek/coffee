@@ -1,7 +1,6 @@
 server:
   port: 8081
 spring:
-#  FIXME
   main:
     allow-circular-references: true
   kafka:
