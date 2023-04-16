@@ -5,26 +5,36 @@ package io.spring.barcelona.coffee.waiter.coffee;
  */
 public class Traditional extends Coffee {
 
+
+	private int steamedMilkContent;
+	private int milkFoamContent;
+
+	Traditional() {
+	}
+
 	Traditional(String name, int coffeeContent, int steamedMilkContent, int milkFoamContent) {
 		super(name, coffeeContent);
 		this.steamedMilkContent = steamedMilkContent;
 		this.milkFoamContent = milkFoamContent;
 	}
 
-	int steamedMilkContent;
-
-
-	int milkFoamContent;
-
 	Traditional(String espresso, int coffeeContent) {
 		super(espresso, coffeeContent);
+	}
+
+	public int getSteamedMilkContent() {
+		return steamedMilkContent;
+	}
+
+	public int getMilkFoamContent() {
+		return milkFoamContent;
 	}
 
 	@Override
 	public String toString() {
 		return "Traditional Coffee{" +
-				"name='" + name + '\'' +
-				", coffeeContent=" + coffeeContent +
+				"name='" + getName() + '\'' +
+				", coffeeContent=" + getCoffeeContent() +
 				", steamedMilkContent=" + steamedMilkContent +
 				", milkFoamContent=" + milkFoamContent +
 				'}';

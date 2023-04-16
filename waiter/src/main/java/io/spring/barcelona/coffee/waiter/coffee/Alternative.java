@@ -5,18 +5,25 @@ package io.spring.barcelona.coffee.waiter.coffee;
  */
 public class Alternative extends Coffee {
 
+	private BrewingDevice device;
+
+	Alternative() {
+	}
+
 	Alternative(String name, int coffeeContent, BrewingDevice device) {
 		super(name, coffeeContent);
 		this.device = device;
 	}
 
-	BrewingDevice device;
+	public BrewingDevice getDevice() {
+		return device;
+	}
 
 	@Override
 	public String toString() {
 		return "Alternative Coffee{" +
-				"name='" + name + '\'' +
-				", coffeeContent=" + coffeeContent +
+				"name='" + getName() + '\'' +
+				", coffeeContent=" + getCoffeeContent() +
 				", device=" + device +
 				'}';
 	}

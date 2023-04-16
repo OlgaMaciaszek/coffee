@@ -17,4 +17,11 @@ public class Order {
 	public Set<OrderEntry> getEntries() {
 		return entries;
 	}
+
+	@Override
+	public String toString() {
+		return "Order{" +
+				"entries=" + entries +
+				'}';
+	}
 }

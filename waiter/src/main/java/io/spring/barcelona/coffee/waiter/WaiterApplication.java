@@ -51,7 +51,7 @@ public class WaiterApplication {
 
 	@KafkaListener(id = "waiter", topics = "servings")
 	public void listen(Serving serving) {
-		LOG.info(serving);
+		LOG.info("Here  you are: " + serving);
 	}
 
 	@PostMapping("/order/{name}/{count}")

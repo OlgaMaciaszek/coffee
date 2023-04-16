@@ -23,4 +23,12 @@ public class OrderEntry {
 	public int getCount() {
 		return count;
 	}
+
+	@Override
+	public String toString() {
+		return "OrderEntry{" +
+				"beverageName='" + beverageName + '\'' +
+				", count=" + count +
+				'}';
+	}
 }

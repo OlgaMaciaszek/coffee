@@ -5,7 +5,12 @@ package io.spring.barcelona.coffee.barista.coffee;
  */
 public class Coffee {
 
+	private String name;
 
+	private int coffeeContent;
+
+	Coffee() {
+	}
 
 	public static Coffee espresso() {
 		return new Traditional("Espresso", 30);
@@ -33,9 +38,13 @@ public class Coffee {
 		this.coffeeContent = coffeeContent;
 	}
 
-	String name;
+	public String getName() {
+		return name;
+	}
 
-	int coffeeContent;
+	public int getCoffeeContent() {
+		return coffeeContent;
+	}
 
 	@Override
 	public String toString() {
