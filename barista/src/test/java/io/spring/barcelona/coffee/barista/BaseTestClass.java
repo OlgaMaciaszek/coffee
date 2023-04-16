@@ -11,8 +11,7 @@ import javax.annotation.Nullable;
 
 import io.spring.barcelona.coffee.barista.orders.Order;
 import io.spring.barcelona.coffee.barista.orders.OrderEntry;
-import io.spring.barcelona.coffee.barista.service.CoffeeService;
-import io.spring.barcelona.coffee.barista.service.Serving;
+import io.spring.barcelona.coffee.barista.service.KafkaHandler;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
@@ -30,7 +29,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.kafka.annotation.EnableKafka;
 import org.springframework.kafka.annotation.KafkaListener;
-import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.support.DefaultKafkaHeaderMapper;
 import org.springframework.kafka.support.KafkaHeaders;
 import org.springframework.messaging.Message;
@@ -51,9 +49,7 @@ import org.springframework.test.context.DynamicPropertySource;
 public abstract class BaseTestClass {
 
 	@Autowired
-	KafkaTemplate<Object, Object> template;
-
-	CoffeeService coffeeService = new CoffeeService();
+	KafkaHandler kafkaHandler;
 
 	@Container
 	static KafkaContainer kafka = new KafkaContainer(DockerImageName.parse("confluentinc/cp-kafka"));
@@ -67,8 +63,13 @@ public abstract class BaseTestClass {
 		Order order = new Order();
 		order.add(new OrderEntry("latte", 6));
 		order.add(new OrderEntry("v60", 8));
-		Serving serving = coffeeService.prepareServing(order);
-		template.send("servings", serving);
+		kafkaHandler.process(order);
+	}
+
+	public void triggerError() {
+		Order order = new Order();
+		order.add(new OrderEntry("espreso", 1));
+		kafkaHandler.process(order);
 	}
 
 	@Configuration
@@ -114,6 +115,7 @@ public abstract class BaseTestClass {
 			if (message != null) {
 				broker.remove(destination);
 				LOG.info("Removed a message from a topic [" + destination + "]");
+				LOG.info(message.getPayload().toString());
 			}
 			return message;
 		}

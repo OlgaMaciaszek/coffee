@@ -10,3 +10,4 @@
 ## TODO
 * Use Testcontainers instead of docker-compose also for setting up the local dev environment (?)
 * Remove circular dependencies
+* Add contract with regexp (?)
