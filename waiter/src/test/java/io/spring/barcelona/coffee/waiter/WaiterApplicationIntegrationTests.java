@@ -61,7 +61,10 @@ class WaiterApplicationIntegrationTests {
 
 		Awaitility.await().atMost(Duration.ofSeconds(30))
 				.pollInterval(Duration.ofSeconds(5))
-				.untilAsserted(() -> assertThat(output).contains("{\\\"coffees\\\":[{\\\"name\\\":\\\"V60\\\",\\\"coffeeContent\\\":500,\\\"device\\\":\\\"V60\\\"},{\\\"name\\\":\\\"Latte\\\",\\\"coffeeContent\\\":60,\\\"steamedMilkContent\\\":180,\\\"milkFoamContent\\\":5}]}\""));
+				.untilAsserted(() -> {
+					assertThat(output).contains("\\\"coffee\\\":{\\\"name\\\":\\\"V60\\\",\\\"coffeeContent\\\":\\\"500\\\",\\\"device\\\":\\\"V60\\");
+					assertThat(output).contains("\"coffee\\\":{\\\"name\\\":\\\"Latte\\\",\\\"coffeeContent\\\":\\\"60\\\",\\\"steamedMilkContent\\\":\\\"180\\\",\\\"milkFoamContent\\\":\\\"5\\\"");
+				});
 	}
 
 	@Test
@@ -70,9 +73,7 @@ class WaiterApplicationIntegrationTests {
 
 		Awaitility.await().atMost(Duration.ofSeconds(30))
 				.pollInterval(Duration.ofSeconds(5))
-				.untilAsserted(() -> assertThat(output).contains("We currently do not have the following coffee in our menu: espreso"));
-
-		assertThat(output).contains("We currently do not have the following coffee in our menu: espreso");
+				.untilAsserted(() -> assertThat(output).contains("We currently do not have the following coffee in our menu: expresso"));
 	}
 
 }

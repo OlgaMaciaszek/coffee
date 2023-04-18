@@ -15,3 +15,12 @@ Both apps are producers and consumers at the same time, but for the purposes of 
   environment (?)
 * Add contract with regexp (?)
 * Fix serialisation issue while running `void shouldProcessServing(CapturedOutput output)`
+* Add more details to contracts, such as headers
+* Verify @KafkaConnection (?)
+* Port contracts to Kotlin
+
+
+## Talking points
+
+* Verifier interfaces implementations and sample implementation
+* Contract with Regex example

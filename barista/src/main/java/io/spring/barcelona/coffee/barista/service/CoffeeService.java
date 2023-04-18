@@ -16,9 +16,11 @@ public class CoffeeService {
 
 	public Serving prepareServing(Order order) {
 		Serving serving = new Serving();
-		order.getEntries().forEach(entry -> IntStream.of(entry.getCount())
-				.forEach(i -> serving.addToServing(Coffees.forName(entry.getBeverageName()
-						.toLowerCase(Locale.getDefault())))));
+		order.getEntries().forEach(entry ->
+				IntStream.range(0, entry.getCount())
+						.forEach(i ->
+								serving.add(Beverage.of(Coffees.forName(entry.getBeverageName()
+										.toLowerCase(Locale.getDefault()))))));
 		return serving;
 	}
 }

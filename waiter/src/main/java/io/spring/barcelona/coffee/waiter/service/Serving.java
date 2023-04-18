@@ -1,7 +1,10 @@
 package io.spring.barcelona.coffee.waiter.service;
 
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 
 import io.spring.barcelona.coffee.waiter.coffee.Coffee;
 
@@ -10,20 +13,23 @@ import io.spring.barcelona.coffee.waiter.coffee.Coffee;
  */
 public class Serving {
 
-	private Set<Coffee> coffees = new HashSet<>();
+	private final Set<Beverage> beverages = new HashSet<>();
 
-	void addToServing(Coffee coffee) {
-		coffees.add(coffee);
+	Serving() {
 	}
 
-	public Set<Coffee> getCoffees() {
-		return coffees;
+	public void add(Beverage beverage) {
+		beverages.add(beverage);
+	}
+
+	public Set<Beverage> getBeverages() {
+		return beverages;
 	}
 
 	@Override
 	public String toString() {
 		return "Serving{" +
-				"coffees=" + coffees +
+				"beverages=" + beverages +
 				'}';
 	}
 }

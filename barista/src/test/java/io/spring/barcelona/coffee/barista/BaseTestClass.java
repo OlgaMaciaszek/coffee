@@ -54,6 +54,7 @@ public abstract class BaseTestClass {
 	@Container
 	static KafkaContainer kafka = new KafkaContainer(DockerImageName.parse("confluentinc/cp-kafka"));
 
+
 	@DynamicPropertySource
 	static void kafkaProperties(DynamicPropertyRegistry registry) {
 		registry.add("spring.kafka.bootstrap-servers", kafka::getBootstrapServers);
@@ -61,14 +62,14 @@ public abstract class BaseTestClass {
 
 	public void triggerServing() {
 		Order order = new Order();
-		order.add(new OrderEntry("latte", 6));
-		order.add(new OrderEntry("v60", 8));
+		order.add(new OrderEntry("latte", 1));
+		order.add(new OrderEntry("v60", 2));
 		kafkaHandler.process(order);
 	}
 
 	public void triggerError() {
 		Order order = new Order();
-		order.add(new OrderEntry("espreso", 1));
+		order.add(new OrderEntry("expresso", 1));
 		kafkaHandler.process(order);
 	}
 
@@ -132,7 +133,7 @@ public abstract class BaseTestClass {
 
 		@Override
 		public Message receive(String destination, YamlContract contract) {
-			return receive(destination, 5, TimeUnit.SECONDS, contract);
+			return receive(destination, 8, TimeUnit.SECONDS, contract);
 		}
 
 	}

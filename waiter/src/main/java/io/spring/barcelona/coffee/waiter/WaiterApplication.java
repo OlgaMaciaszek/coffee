@@ -73,6 +73,16 @@ public class WaiterApplication {
 		return ResponseEntity.status(HttpStatus.CREATED).build();
 	}
 
+	@PostMapping("/order")
+	ResponseEntity<Void> testOrder() {
+		Order order = new Order();
+		order.add(new OrderEntry("latte", 6));
+		order.add(new OrderEntry("v60", 8));
+		template.send("orders", order);
+		return ResponseEntity.status(HttpStatus.CREATED).build();
+	}
+
+
 }
 
 

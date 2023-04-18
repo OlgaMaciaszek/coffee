@@ -14,10 +14,7 @@ Contract.make {
 	outputMessage {
 		sentTo("errors")
 		body([
-				message:
-						$(consumer("We currently do not have the following coffee in our menu: espreso"),
-								producer(
-										regex("^We currently do not have the following coffee in our menu: [a-zA-Z0-9]+")))
+				message: "We currently do not have the following coffee in our menu: expresso"
 		])
 	}
 }
