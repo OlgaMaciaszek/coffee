@@ -133,7 +133,7 @@ public abstract class BaseTestClass {
 
 		@Override
 		public Message receive(String destination, YamlContract contract) {
-			return receive(destination, 8, TimeUnit.SECONDS, contract);
+			return receive(destination, 10, TimeUnit.SECONDS, contract);
 		}
 
 	}

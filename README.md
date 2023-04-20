@@ -13,8 +13,6 @@ Both apps are producers and consumers at the same time, but for the purposes of 
 
 * Use Testcontainers instead of docker-compose also for setting up the local dev
   environment (?)
-* Add contract with regexp (?)
-* Fix serialisation issue while running `void shouldProcessServing(CapturedOutput output)`
 * Add more details to contracts, such as headers
 * Verify @KafkaConnection (?)
 * Port contracts to Kotlin

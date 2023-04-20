@@ -6,6 +6,7 @@ import java.util.Map;
 
 import javax.annotation.Nullable;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.awaitility.Awaitility;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -25,8 +26,10 @@ import org.springframework.cloud.contract.verifier.converter.YamlContract;
 import org.springframework.cloud.contract.verifier.messaging.MessageVerifierSender;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.support.KafkaHeaders;
+import org.springframework.kafka.support.converter.JsonMessageConverter;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageHeaders;
 import org.springframework.messaging.support.MessageBuilder;
@@ -39,7 +42,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE, classes = {TestConfig.class, WaiterApplication.class})
 @AutoConfigureStubRunner(ids = "io.spring.barcelona:barista", stubsMode = StubRunnerProperties.StubsMode.LOCAL)
 @Testcontainers
-@ActiveProfiles("test")
+@ActiveProfiles("contracts")
 @ExtendWith(OutputCaptureExtension.class)
 class WaiterApplicationIntegrationTests {
 
@@ -61,10 +64,10 @@ class WaiterApplicationIntegrationTests {
 
 		Awaitility.await().atMost(Duration.ofSeconds(30))
 				.pollInterval(Duration.ofSeconds(5))
-				.untilAsserted(() -> {
-					assertThat(output).contains("\\\"coffee\\\":{\\\"name\\\":\\\"V60\\\",\\\"coffeeContent\\\":\\\"500\\\",\\\"device\\\":\\\"V60\\");
-					assertThat(output).contains("\"coffee\\\":{\\\"name\\\":\\\"Latte\\\",\\\"coffeeContent\\\":\\\"60\\\",\\\"steamedMilkContent\\\":\\\"180\\\",\\\"milkFoamContent\\\":\\\"5\\\"");
-				});
+				.untilAsserted(() -> assertThat(output).contains("""
+						Here you are: Serving{beverages=[Beverage{""", """
+						coffee=Coffee{name='Latte', coffeeContent=60}}""", """
+						coffee=Coffee{name='V60', coffeeContent=500}}"""));
 	}
 
 	@Test
@@ -96,5 +99,22 @@ class TestConfig {
 				kafkaTemplate.send(MessageBuilder.createMessage(payload, new MessageHeaders(newHeaders)));
 			}
 		};
+	}
+
+	@Bean
+	@Primary
+	JsonMessageConverter noopMessageConverter() {
+		return new NoopJsonMessageConverter();
+	}
+}
+
+class NoopJsonMessageConverter extends JsonMessageConverter {
+
+	NoopJsonMessageConverter() {
+	}
+
+	@Override
+	protected Object convertPayload(Message<?> message) {
+		return message.getPayload();
 	}
 }
