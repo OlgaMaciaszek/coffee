@@ -16,6 +16,7 @@ Both apps are producers and consumers at the same time, but for the purposes of 
 * Add more details to contracts, such as headers
 * Verify @KafkaConnection (?)
 * Port contracts to Kotlin
+* Add tests with broken stuff - Oleg
 
 
 ## Talking points

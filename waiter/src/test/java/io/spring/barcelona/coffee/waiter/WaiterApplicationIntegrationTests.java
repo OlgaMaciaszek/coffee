@@ -6,7 +6,6 @@ import java.util.Map;
 
 import javax.annotation.Nullable;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.awaitility.Awaitility;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -42,17 +41,17 @@ import static org.assertj.core.api.Assertions.assertThat;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE, classes = {TestConfig.class, WaiterApplication.class})
 @AutoConfigureStubRunner(ids = "io.spring.barcelona:barista", stubsMode = StubRunnerProperties.StubsMode.LOCAL)
 @Testcontainers
-@ActiveProfiles("contracts")
+@ActiveProfiles("integration")
 @ExtendWith(OutputCaptureExtension.class)
 class WaiterApplicationIntegrationTests {
 
 
 	@Container
-	static KafkaContainer kafka = new KafkaContainer(DockerImageName.parse("confluentinc/cp-kafka"));
+	static KafkaContainer kafkaForContracts = new KafkaContainer(DockerImageName.parse("confluentinc/cp-kafka"));
 
 	@DynamicPropertySource
 	static void kafkaProperties(DynamicPropertyRegistry registry) {
-		registry.add("spring.kafka.bootstrap-servers", kafka::getBootstrapServers);
+		registry.add("spring.kafka.bootstrap-servers", kafkaForContracts::getBootstrapServers);
 	}
 
 	@Autowired

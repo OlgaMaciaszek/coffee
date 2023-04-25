@@ -30,9 +30,6 @@ public class WaiterApplication {
 
 	private static final Log LOG = LogFactory.getLog(WaiterApplication.class);
 
-	@Autowired
-	private KafkaTemplate<Object, Object> template;
-
 	public static void main(String[] args) {
 		SpringApplication.run(WaiterApplication.class, args);
 	}
@@ -76,25 +73,6 @@ public class WaiterApplication {
 	public void errors(Exception exception) {
 		LOG.info("We apologise : " + exception.getMessage());
 	}
-
-
-	@PostMapping("/order/{name}/{count}")
-	ResponseEntity<Void> order(@PathVariable("name") String beverageName, @PathVariable int count) {
-		Order order = new Order();
-		order.add(new OrderEntry(beverageName, count));
-		template.send("orders", order);
-		return ResponseEntity.status(HttpStatus.CREATED).build();
-	}
-
-	@PostMapping("/order")
-	ResponseEntity<Void> testOrder() {
-		Order order = new Order();
-		order.add(new OrderEntry("latte", 6));
-		order.add(new OrderEntry("v60", 8));
-		template.send("orders", order);
-		return ResponseEntity.status(HttpStatus.CREATED).build();
-	}
-
 
 }
 
