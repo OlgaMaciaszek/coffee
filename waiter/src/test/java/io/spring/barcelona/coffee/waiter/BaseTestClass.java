@@ -1,6 +1,5 @@
 package io.spring.barcelona.coffee.waiter;
 
-import java.time.Duration;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.BrokenBarrierException;
@@ -14,8 +13,6 @@ import io.spring.barcelona.coffee.waiter.controller.OrderController;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
-import org.awaitility.Awaitility;
-import org.junit.jupiter.api.BeforeEach;
 import org.testcontainers.containers.KafkaContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
@@ -31,7 +28,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.kafka.annotation.EnableKafka;
 import org.springframework.kafka.annotation.KafkaListener;
-import org.springframework.kafka.config.KafkaListenerEndpointRegistry;
 import org.springframework.kafka.support.DefaultKafkaHeaderMapper;
 import org.springframework.kafka.support.KafkaHeaders;
 import org.springframework.messaging.Message;
@@ -49,7 +45,7 @@ import org.springframework.test.context.DynamicPropertySource;
 @AutoConfigureMessageVerifier
 @ActiveProfiles("contracts")
 @Testcontainers
-public class BaseTestClass {
+public class BaseTestClass extends BaseSetup {
 
 	@Container
 	static KafkaContainer kafka = new KafkaContainer(DockerImageName.parse("confluentinc/cp-kafka"));
@@ -64,16 +60,6 @@ public class BaseTestClass {
 
 	@Autowired
 	private OrderController orderController;
-
-	@BeforeEach
-	void waitTillListenersSetUp() {
-		Awaitility.await().atLeast(Duration.ofMillis(500))
-				.atMost(Duration.ofSeconds(5))
-				.pollDelay(Duration.ofMillis(500))
-				.untilAsserted(() -> context.getBeansOfType(KafkaListenerEndpointRegistry.class)
-						.get("org.springframework.kafka.config.internalKafkaListenerEndpointRegistry")
-						.getListenerContainer("waiterOrders").isChildRunning());
-	}
 
 	public void triggerOrder() {
 		orderController.testOrder();
