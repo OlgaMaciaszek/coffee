@@ -65,11 +65,11 @@ public class WaiterApplication {
 	}
 
 	@KafkaListener(id = "waiterServings", topics = "servings")
-	public void listen(Serving serving) {
+	public void servings(Serving serving) {
 		LOG.info("Here you are: " + serving);
 	}
 
-	@KafkaListener(id = "waiterException", topics = "errors")
+	@KafkaListener(id = "waiterErrors", topics = "errors")
 	public void errors(Exception exception) {
 		LOG.info("We apologise : " + exception.getMessage());
 	}

@@ -40,9 +40,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE, classes = {TestConfig.class, WaiterApplication.class})
 @AutoConfigureStubRunner(ids = "io.spring.barcelona:barista", stubsMode = StubRunnerProperties.StubsMode.LOCAL)
-@Testcontainers
 @ActiveProfiles("integration")
 @ExtendWith(OutputCaptureExtension.class)
+@Testcontainers
 class WaiterApplicationIntegrationTests {
 
 
