@@ -27,7 +27,7 @@ public class KafkaHandler {
 
 	@KafkaListener(id = "baristaOrders", topics = "orders")
 	public void listen(Order order) {
-		LOG.info(order);
+		LOG.info("Order received: " + order);
 		process(order);
 	}
 

@@ -2,9 +2,9 @@ package io.spring.barcelona.coffee.waiter;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.BrokenBarrierException;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.CyclicBarrier;
 import java.util.concurrent.TimeUnit;
 
 import javax.annotation.Nullable;
@@ -80,52 +80,41 @@ public class BaseTestClass extends BaseSetup {
 
 		private static final Log LOG = LogFactory.getLog(KafkaMessageVerifier.class);
 
-		private final Map<String, Message<?>> broker = new ConcurrentHashMap<>();
+		Map<String, BlockingQueue<Message<?>>> broker = new ConcurrentHashMap<>();
 
-		private final CyclicBarrier cyclicBarrier = new CyclicBarrier(2);
 
 		@Override
 		public Message receive(String destination, long timeout, TimeUnit timeUnit, @Nullable YamlContract contract) {
-			Message message = message(destination);
-			if (message != null) {
-				return message;
-			}
-			await(timeout, timeUnit);
-			return message(destination);
-		}
-
-		private void await(long timeout, TimeUnit timeUnit) {
+			broker.putIfAbsent(destination, new ArrayBlockingQueue<>(1));
+			BlockingQueue<Message<?>> messageQueue = broker.get(destination);
+			Message<?> message;
 			try {
-				cyclicBarrier.await(timeout, timeUnit);
+				message = messageQueue.poll(timeout, timeUnit);
 			}
-			catch (Exception e) {
-
+			catch (InterruptedException e) {
+				throw new RuntimeException(e);
 			}
-		}
-
-		private Message message(String destination) {
-			Message message = broker.get(destination);
 			if (message != null) {
-				broker.remove(destination);
 				LOG.info("Removed a message from a topic [" + destination + "]");
 				LOG.info(message.getPayload().toString());
 			}
 			return message;
 		}
 
-		@KafkaListener(id = "waiterOrders", topics = "orders")
-		public void testOrders(ConsumerRecord payload, @Header(KafkaHeaders.RECEIVED_TOPIC) String topic) throws BrokenBarrierException, InterruptedException {
+
+		@KafkaListener(id = "waiterOrders", topics = {"orders"})
+		public void listen(ConsumerRecord payload, @Header(KafkaHeaders.RECEIVED_TOPIC) String topic) {
 			LOG.info("Got a message from a topic [" + topic + "]");
 			Map<String, Object> headers = new HashMap<>();
 			new DefaultKafkaHeaderMapper().toHeaders(payload.headers(), headers);
-			broker.put(topic, MessageBuilder.createMessage(payload.value(), new MessageHeaders(headers)));
-			cyclicBarrier.await();
-			cyclicBarrier.reset();
+			broker.putIfAbsent(topic, new ArrayBlockingQueue<>(1));
+			BlockingQueue<Message<?>> messageQueue = broker.get(topic);
+			messageQueue.add(MessageBuilder.createMessage(payload.value(), new MessageHeaders(headers)));
 		}
 
 		@Override
 		public Message receive(String destination, YamlContract contract) {
-			return receive(destination, 5, TimeUnit.SECONDS, contract);
+			return receive(destination, 15, TimeUnit.SECONDS, contract);
 		}
 
 	}
