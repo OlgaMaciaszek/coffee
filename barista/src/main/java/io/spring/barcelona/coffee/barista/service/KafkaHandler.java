@@ -1,5 +1,7 @@
 package io.spring.barcelona.coffee.barista.service;
 
+import java.util.Map;
+
 import io.spring.barcelona.coffee.barista.exceptions.CoffeeNotAvailableException;
 import io.spring.barcelona.coffee.barista.orders.Order;
 import org.apache.commons.logging.Log;
@@ -7,6 +9,9 @@ import org.apache.commons.logging.LogFactory;
 
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.kafka.support.KafkaHeaders;
+import org.springframework.messaging.MessageHeaders;
+import org.springframework.messaging.support.GenericMessage;
 import org.springframework.stereotype.Component;
 
 /**
@@ -41,6 +46,9 @@ public class KafkaHandler {
 			template.send("errors", exception);
 			return;
 		}
-		template.send("servings", serving);
+		Map<String, Object> headers = Map.of(KafkaHeaders.TOPIC, "servings",
+				"testKey1", "testValue1",
+				"contentType", "application/json");
+		template.send(new GenericMessage<>(serving, new MessageHeaders(headers)));
 	}
 }

@@ -12,8 +12,7 @@ Both apps are producers and consumers at the same time, but for the purposes of 
 ## TODO
 
 * Use Testcontainers instead of docker-compose also for setting up the local dev
-  environment (?)
-* Add more details to contracts, such as headers
+  environment - Oleg
 * Verify @KafkaConnection (?)
 * Port contracts to Kotlin
 * Add tests with broken stuff - Oleg

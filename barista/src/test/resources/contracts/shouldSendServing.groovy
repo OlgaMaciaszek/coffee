@@ -28,6 +28,10 @@ Contract.make {
 								milkFoamContent   : "5"
 						]]
 		]])
+		headers {
+			messagingContentType(applicationJson())
+			header 'testKey1', 'testValue1'
+		}
 	}
 
 }
