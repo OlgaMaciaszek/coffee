@@ -22,6 +22,7 @@ import org.testcontainers.utility.DockerImageName;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
 import org.springframework.cloud.contract.verifier.converter.YamlContract;
 import org.springframework.cloud.contract.verifier.messaging.MessageVerifierReceiver;
 import org.springframework.cloud.contract.verifier.messaging.boot.AutoConfigureMessageVerifier;
@@ -52,13 +53,8 @@ public abstract class BaseTestClass {
 	KafkaHandler kafkaHandler;
 
 	@Container
+	@ServiceConnection
 	static KafkaContainer kafka = new KafkaContainer(DockerImageName.parse("confluentinc/cp-kafka"));
-
-
-	@DynamicPropertySource
-	static void kafkaProperties(DynamicPropertyRegistry registry) {
-		registry.add("spring.kafka.bootstrap-servers", kafka::getBootstrapServers);
-	}
 
 	public void triggerServing() {
 		Order order = new Order();

@@ -21,6 +21,7 @@ import org.testcontainers.utility.DockerImageName;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.system.OutputCaptureExtension;
+import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
 import org.springframework.cloud.contract.stubrunner.StubTrigger;
 import org.springframework.cloud.contract.stubrunner.spring.AutoConfigureStubRunner;
 import org.springframework.cloud.contract.stubrunner.spring.StubRunnerProperties;
@@ -59,12 +60,8 @@ class BaristaApplicationIntegrationTests {
 	BlockingQueue<Message<?>> broker = new ArrayBlockingQueue<>(1);
 
 	@Container
+	@ServiceConnection
 	static KafkaContainer kafkaForContracts = new KafkaContainer(DockerImageName.parse("confluentinc/cp-kafka"));
-
-	@DynamicPropertySource
-	static void kafkaProperties(DynamicPropertyRegistry registry) {
-		registry.add("spring.kafka.bootstrap-servers", kafkaForContracts::getBootstrapServers);
-	}
 
 	@Autowired
 	StubTrigger trigger;
