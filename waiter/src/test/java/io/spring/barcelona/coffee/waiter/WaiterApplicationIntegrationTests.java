@@ -1,12 +1,17 @@
 package io.spring.barcelona.coffee.waiter;
 
+import io.restassured.RestAssured;
+import io.restassured.builder.RequestSpecBuilder;
+import io.restassured.specification.RequestSpecification;
 import org.awaitility.Awaitility;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.system.CapturedOutput;
 import org.springframework.boot.test.system.OutputCaptureExtension;
+import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
 import org.springframework.cloud.contract.stubrunner.StubTrigger;
 import org.springframework.cloud.contract.stubrunner.spring.AutoConfigureStubRunner;
@@ -16,6 +21,8 @@ import org.springframework.cloud.contract.verifier.messaging.MessageVerifierSend
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.support.KafkaHeaders;
 import org.springframework.kafka.support.converter.JsonMessageConverter;
@@ -33,9 +40,10 @@ import java.time.Duration;
 import java.util.HashMap;
 import java.util.Map;
 
+import static io.restassured.RestAssured.given;
 import static org.assertj.core.api.Assertions.assertThat;
 
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE, classes = {TestConfig.class, WaiterApplication.class, ContainersConfig.class})
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, classes = {TestConfig.class, WaiterApplication.class, ContainersConfig.class})
 @AutoConfigureStubRunner(ids = "io.spring.barcelona:barista", stubsMode = StubRunnerProperties.StubsMode.LOCAL)
 @ActiveProfiles("integration")
 @ExtendWith(OutputCaptureExtension.class)
@@ -46,6 +54,12 @@ class WaiterApplicationIntegrationTests {
 
     @Test
     void shouldProcessServing(CapturedOutput output) {
+        given(requestSpecification)
+          .pathParam("order", "V60")
+          .pathParam("count", "60")
+          .when().get("/order/{order}/{count}")
+            .then().statusCode(201);
+
         trigger.trigger("serving");
 
         Awaitility.await().atMost(Duration.ofSeconds(10))
@@ -63,6 +77,24 @@ class WaiterApplicationIntegrationTests {
         Awaitility.await().atMost(Duration.ofSeconds(30))
                 .pollInterval(Duration.ofSeconds(5))
                 .untilAsserted(() -> assertThat(output).contains("We currently do not have the following coffee in our menu: expresso"));
+    }
+
+    // RestAssured config
+    protected RequestSpecification requestSpecification;
+
+    @LocalServerPort
+    protected int localServerPort;
+
+    @BeforeEach
+    public void setUpAbstractIntegrationTest() {
+        RestAssured.enableLoggingOfRequestAndResponseIfValidationFails();
+        requestSpecification = new RequestSpecBuilder()
+          .setPort(localServerPort)
+          .addHeader(
+            HttpHeaders.CONTENT_TYPE,
+            MediaType.APPLICATION_JSON_VALUE
+          )
+          .build();
     }
 
 }
