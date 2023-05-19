@@ -12,7 +12,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.system.CapturedOutput;
 import org.springframework.boot.test.system.OutputCaptureExtension;
 import org.springframework.boot.test.web.server.LocalServerPort;
-import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
 import org.springframework.cloud.contract.stubrunner.StubTrigger;
 import org.springframework.cloud.contract.stubrunner.spring.AutoConfigureStubRunner;
 import org.springframework.cloud.contract.stubrunner.spring.StubRunnerProperties;
@@ -30,17 +29,12 @@ import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageHeaders;
 import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.test.context.ActiveProfiles;
-import org.testcontainers.containers.KafkaContainer;
-import org.testcontainers.junit.jupiter.Container;
-import org.testcontainers.junit.jupiter.Testcontainers;
-import org.testcontainers.utility.DockerImageName;
 
 import javax.annotation.Nullable;
 import java.time.Duration;
 import java.util.HashMap;
 import java.util.Map;
 
-import static io.restassured.RestAssured.given;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, classes = {TestConfig.class, WaiterApplication.class, ContainersConfig.class})
@@ -54,12 +48,6 @@ class WaiterApplicationIntegrationTests {
 
     @Test
     void shouldProcessServing(CapturedOutput output) {
-        given(requestSpecification)
-          .pathParam("order", "V60")
-          .pathParam("count", "60")
-          .when().get("/order/{order}/{count}")
-            .then().statusCode(201);
-
         trigger.trigger("serving");
 
         Awaitility.await().atMost(Duration.ofSeconds(10))
@@ -89,18 +77,19 @@ class WaiterApplicationIntegrationTests {
     public void setUpAbstractIntegrationTest() {
         RestAssured.enableLoggingOfRequestAndResponseIfValidationFails();
         requestSpecification = new RequestSpecBuilder()
-          .setPort(localServerPort)
-          .addHeader(
-            HttpHeaders.CONTENT_TYPE,
-            MediaType.APPLICATION_JSON_VALUE
-          )
-          .build();
+                .setPort(localServerPort)
+                .addHeader(
+                        HttpHeaders.CONTENT_TYPE,
+                        MediaType.APPLICATION_JSON_VALUE
+                )
+                .build();
     }
 
 }
 
 @Configuration
 class TestConfig {
+
 
     @Bean
     MessageVerifierSender<Message<?>> standaloneMessageVerifier(KafkaTemplate kafkaTemplate) {

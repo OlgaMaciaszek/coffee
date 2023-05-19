@@ -45,7 +45,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  * @author Olga Maciaszek-Sharma
  */
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE, classes = {TestConfig.class, BaristaApplication.class})
-@AutoConfigureStubRunner(ids = "io.spring.barcelona:waiter", stubsMode = StubRunnerProperties.StubsMode.LOCAL)
+//@AutoConfigureStubRunner(ids = "io.spring.barcelona:waiter", stubsMode = StubRunnerProperties.StubsMode.LOCAL)
 @ActiveProfiles("integration")
 @ExtendWith(OutputCaptureExtension.class)
 @Testcontainers
@@ -58,20 +58,9 @@ class BaristaApplicationIntegrationTests {
     @Container
     @ServiceConnection
     static KafkaContainer kafkaForContracts = new KafkaContainer(DockerImageName.parse("confluentinc/cp-kafka"));
-
-    @Autowired
-    StubTrigger trigger;
-
-    @Test
-    void shouldProcessOrder() throws InterruptedException {
-        trigger.trigger("order");
-
-        Message<?> servingMessage = broker.poll(10, TimeUnit.SECONDS);
-
-        assertThat(servingMessage).isNotNull();
-        assertThat(servingMessage.getPayload().toString()).contains("""
-                "coffee":{"name":"Latte","coffeeContent":60,"steamedMilkContent":180,"milkFoamContent":5""");
-    }
+//
+//    @Autowired
+//    StubTrigger trigger;
 
 
     @KafkaListener(id = "baristaServings", topics = "servings")

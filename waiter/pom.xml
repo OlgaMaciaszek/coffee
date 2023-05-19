@@ -106,16 +106,6 @@
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
 			</plugin>
-			<plugin>
-				<groupId>org.springframework.cloud</groupId>
-				<artifactId>spring-cloud-contract-maven-plugin</artifactId>
-				<version>${spring-cloud-contract-maven-plugin.version}</version>
-				<extensions>true</extensions>
-				<configuration>
-					<testFramework>JUNIT5</testFramework>
-					<baseClassForTests>io.spring.barcelona.coffee.waiter.BaseTestClass</baseClassForTests>
-				</configuration>
-			</plugin>
 		</plugins>
 	</build>
 

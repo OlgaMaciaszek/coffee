@@ -74,6 +74,8 @@ public abstract class BaseTestClass {
             return new KafkaMessageVerifier();
         }
 
+
+
     }
 
     static class KafkaMessageVerifier implements MessageVerifierReceiver<Message<?>> {
