@@ -1,19 +1,8 @@
 package io.spring.barcelona.coffee.waiter;
 
-import java.time.Duration;
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.annotation.Nullable;
-
 import org.awaitility.Awaitility;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.testcontainers.containers.KafkaContainer;
-import org.testcontainers.junit.jupiter.Container;
-import org.testcontainers.junit.jupiter.Testcontainers;
-import org.testcontainers.utility.DockerImageName;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.system.CapturedOutput;
@@ -34,8 +23,15 @@ import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageHeaders;
 import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.DynamicPropertyRegistry;
-import org.springframework.test.context.DynamicPropertySource;
+import org.testcontainers.containers.KafkaContainer;
+import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.junit.jupiter.Testcontainers;
+import org.testcontainers.utility.DockerImageName;
+
+import javax.annotation.Nullable;
+import java.time.Duration;
+import java.util.HashMap;
+import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -46,70 +42,70 @@ import static org.assertj.core.api.Assertions.assertThat;
 @Testcontainers
 class WaiterApplicationIntegrationTests {
 
-	@Container
-	@ServiceConnection
-	static KafkaContainer kafkaForContracts = new KafkaContainer(DockerImageName.parse("confluentinc/cp-kafka"));
+    @Container
+    @ServiceConnection
+    static KafkaContainer kafkaForContracts = new KafkaContainer(DockerImageName.parse("confluentinc/cp-kafka"));
 
-	@Autowired
-	StubTrigger trigger;
+    @Autowired
+    StubTrigger trigger;
 
-	@Test
-	void shouldProcessServing(CapturedOutput output) {
-		trigger.trigger("serving");
+    @Test
+    void shouldProcessServing(CapturedOutput output) {
+        trigger.trigger("serving");
 
-		Awaitility.await().atMost(Duration.ofSeconds(10))
-				.pollInterval(Duration.ofMillis(500))
-				.untilAsserted(() -> assertThat(output).contains("""
-						Here you are: Serving{beverages=[Beverage{""", """
-						coffee=Coffee{name='Latte', coffeeContent=60}}""", """
-						coffee=Coffee{name='V60', coffeeContent=500}}"""));
-	}
+        Awaitility.await().atMost(Duration.ofSeconds(10))
+                .pollInterval(Duration.ofMillis(500))
+                .untilAsserted(() -> assertThat(output).contains("""
+                        Here you are: Serving{beverages=[Beverage{""", """
+                        coffee=Coffee{name='Latte', coffeeContent=60}}""", """
+                        coffee=Coffee{name='V60', coffeeContent=500}}"""));
+    }
 
-	@Test
-	void shouldProcessError(CapturedOutput output) {
-		trigger.trigger("error");
+    @Test
+    void shouldProcessError(CapturedOutput output) {
+        trigger.trigger("error");
 
-		Awaitility.await().atMost(Duration.ofSeconds(30))
-				.pollInterval(Duration.ofSeconds(5))
-				.untilAsserted(() -> assertThat(output).contains("We currently do not have the following coffee in our menu: expresso"));
-	}
+        Awaitility.await().atMost(Duration.ofSeconds(30))
+                .pollInterval(Duration.ofSeconds(5))
+                .untilAsserted(() -> assertThat(output).contains("We currently do not have the following coffee in our menu: expresso"));
+    }
 
 }
 
 @Configuration
 class TestConfig {
 
-	@Bean
-	MessageVerifierSender<Message<?>> standaloneMessageVerifier(KafkaTemplate kafkaTemplate) {
-		return new MessageVerifierSender<>() {
+    @Bean
+    MessageVerifierSender<Message<?>> standaloneMessageVerifier(KafkaTemplate kafkaTemplate) {
+        return new MessageVerifierSender<>() {
 
-			@Override
-			public void send(Message<?> message, String destination, @Nullable YamlContract contract) {
-			}
+            @Override
+            public void send(Message<?> message, String destination, @Nullable YamlContract contract) {
+            }
 
-			@Override
-			public <T> void send(T payload, Map<String, Object> headers, String destination, @Nullable YamlContract contract) {
-				Map<String, Object> newHeaders = headers != null ? new HashMap<>(headers) : new HashMap<>();
-				newHeaders.put(KafkaHeaders.TOPIC, destination);
-				kafkaTemplate.send(MessageBuilder.createMessage(payload, new MessageHeaders(newHeaders)));
-			}
-		};
-	}
+            @Override
+            public <T> void send(T payload, Map<String, Object> headers, String destination, @Nullable YamlContract contract) {
+                Map<String, Object> newHeaders = headers != null ? new HashMap<>(headers) : new HashMap<>();
+                newHeaders.put(KafkaHeaders.TOPIC, destination);
+                kafkaTemplate.send(MessageBuilder.createMessage(payload, new MessageHeaders(newHeaders)));
+            }
+        };
+    }
 
-	@Bean
-	@Primary
-	JsonMessageConverter noopMessageConverter() {
-		return new NoopJsonMessageConverter();
-	}
+    @Bean
+    @Primary
+    JsonMessageConverter noopMessageConverter() {
+        return new NoopJsonMessageConverter();
+    }
 }
 
 class NoopJsonMessageConverter extends JsonMessageConverter {
 
-	NoopJsonMessageConverter() {
-	}
+    NoopJsonMessageConverter() {
+    }
 
-	@Override
-	protected Object convertPayload(Message<?> message) {
-		return message.getPayload();
-	}
+    @Override
+    protected Object convertPayload(Message<?> message) {
+        return message.getPayload();
+    }
 }

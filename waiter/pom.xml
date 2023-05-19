@@ -6,7 +6,7 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>3.1.0-SNAPSHOT</version>
+		<version>3.1.0</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>io.spring.barcelona</groupId>
@@ -16,7 +16,7 @@
 	<description>waiter</description>
 	<properties>
 		<java.version>17</java.version>
-		<spring-cloud.version>2022.0.3-SNAPSHOT</spring-cloud.version>
+		<spring-cloud.version>2022.0.2</spring-cloud.version>
 		<testcontainers.version>1.17.6</testcontainers.version>
 		<spring-cloud-contract-maven-plugin.version>4.0.3-SNAPSHOT
 		</spring-cloud-contract-maven-plugin.version>
