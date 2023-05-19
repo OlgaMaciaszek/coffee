@@ -3,11 +3,17 @@ package io.spring.barcelona.coffee.waiter;
 import io.restassured.RestAssured;
 import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.specification.RequestSpecification;
+import org.apache.kafka.clients.CommonClientConfigs;
+import org.apache.kafka.clients.producer.ProducerConfig;
+import org.apache.kafka.common.serialization.Serializer;
+import org.apache.kafka.common.serialization.StringSerializer;
 import org.awaitility.Awaitility;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.kafka.KafkaConnectionDetails;
+import org.springframework.boot.autoconfigure.kafka.KafkaProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.system.CapturedOutput;
 import org.springframework.boot.test.system.OutputCaptureExtension;
@@ -22,7 +28,9 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.kafka.core.DefaultKafkaProducerFactory;
 import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.kafka.core.ProducerFactory;
 import org.springframework.kafka.support.KafkaHeaders;
 import org.springframework.kafka.support.converter.JsonMessageConverter;
 import org.springframework.messaging.Message;
@@ -92,7 +100,7 @@ class TestConfig {
 
 
     @Bean
-    MessageVerifierSender<Message<?>> standaloneMessageVerifier(KafkaTemplate kafkaTemplate) {
+    MessageVerifierSender<Message<?>> standaloneMessageVerifier(KafkaTemplate kafkaTemplate, KafkaProperties properties, KafkaConnectionDetails connectionDetails) {
         return new MessageVerifierSender<>() {
 
             @Override
@@ -103,7 +111,16 @@ class TestConfig {
             public <T> void send(T payload, Map<String, Object> headers, String destination, @Nullable YamlContract contract) {
                 Map<String, Object> newHeaders = headers != null ? new HashMap<>(headers) : new HashMap<>();
                 newHeaders.put(KafkaHeaders.TOPIC, destination);
+                Map map = properties.buildProducerProperties();
+                applyKafkaConnectionDetailsForProducer(map, connectionDetails);
+                DefaultKafkaProducerFactory factory = new DefaultKafkaProducerFactory(map, new StringSerializer(), new StringSerializer());
+                KafkaTemplate kafkaTemplate = new KafkaTemplate(factory);
                 kafkaTemplate.send(MessageBuilder.createMessage(payload, new MessageHeaders(newHeaders)));
+            }
+
+            private void applyKafkaConnectionDetailsForProducer(Map<String, Object> properties,
+                                                                KafkaConnectionDetails connectionDetails) {
+                properties.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, connectionDetails.getProducerBootstrapServers());
             }
         };
     }
