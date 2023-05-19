@@ -35,16 +35,11 @@ import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE, classes = {TestConfig.class, WaiterApplication.class})
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE, classes = {TestConfig.class, WaiterApplication.class, ContainersConfig.class})
 @AutoConfigureStubRunner(ids = "io.spring.barcelona:barista", stubsMode = StubRunnerProperties.StubsMode.LOCAL)
 @ActiveProfiles("integration")
 @ExtendWith(OutputCaptureExtension.class)
-@Testcontainers
 class WaiterApplicationIntegrationTests {
-
-    @Container
-    @ServiceConnection
-    static KafkaContainer kafkaForContracts = new KafkaContainer(DockerImageName.parse("confluentinc/cp-kafka"));
 
     @Autowired
     StubTrigger trigger;
