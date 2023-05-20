@@ -1,18 +1,17 @@
 package io.spring.barcelona.coffee.barista.service;
 
-import java.util.Map;
-
 import io.spring.barcelona.coffee.barista.exceptions.CoffeeNotAvailableException;
 import io.spring.barcelona.coffee.barista.orders.Order;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.support.KafkaHeaders;
 import org.springframework.messaging.MessageHeaders;
 import org.springframework.messaging.support.GenericMessage;
 import org.springframework.stereotype.Component;
+
+import java.util.Map;
 
 /**
  * @author Olga Maciaszek-Sharma

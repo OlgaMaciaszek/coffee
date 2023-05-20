@@ -18,8 +18,6 @@
 		<java.version>17</java.version>
 		<spring-cloud.version>2022.0.2</spring-cloud.version>
 		<testcontainers.version>1.17.6</testcontainers.version>
-		<spring-cloud-contract-maven-plugin.version>4.0.3-SNAPSHOT
-		</spring-cloud-contract-maven-plugin.version>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -35,11 +33,6 @@
 			<artifactId>spring-boot-starter-web</artifactId>
 		</dependency>
 
-		<dependency>
-			<groupId>org.springframework.cloud</groupId>
-			<artifactId>spring-cloud-starter-contract-verifier</artifactId>
-			<scope>test</scope>
-		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>

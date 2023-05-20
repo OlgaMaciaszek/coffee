@@ -1,12 +1,7 @@
 package io.spring.barcelona.coffee.waiter.service;
 
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
-import java.util.UUID;
-
-import io.spring.barcelona.coffee.waiter.coffee.Coffee;
 
 /**
  * @author Olga Maciaszek-Sharma

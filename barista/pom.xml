@@ -18,7 +18,7 @@
 		<java.version>17</java.version>
 		<spring-cloud.version>2022.0.2</spring-cloud.version>
 		<testcontainers.version>1.17.6</testcontainers.version>
-		<spring-cloud-contract-maven-plugin.version>4.0.3-SNAPSHOT
+		<spring-cloud-contract-maven-plugin.version>4.0.2
 		</spring-cloud-contract-maven-plugin.version>
 	</properties>
 	<dependencies>

@@ -14,10 +14,12 @@ import org.springframework.cloud.contract.verifier.messaging.MessageVerifierRece
 import org.springframework.cloud.contract.verifier.messaging.boot.AutoConfigureMessageVerifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 import org.springframework.kafka.annotation.EnableKafka;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.support.DefaultKafkaHeaderMapper;
 import org.springframework.kafka.support.KafkaHeaders;
+import org.springframework.kafka.support.converter.JsonMessageConverter;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageHeaders;
 import org.springframework.messaging.handler.annotation.Header;
@@ -74,7 +76,11 @@ public abstract class BaseTestClass {
             return new KafkaMessageVerifier();
         }
 
-
+        @Bean
+        @Primary
+        JsonMessageConverter noopMessageConverter() {
+            return new NoopJsonMessageConverter();
+        }
 
     }
 
@@ -118,5 +124,16 @@ public abstract class BaseTestClass {
             return receive(destination, 15, TimeUnit.SECONDS, contract);
         }
 
+    }
+}
+
+class NoopJsonMessageConverter extends JsonMessageConverter {
+
+    NoopJsonMessageConverter() {
+    }
+
+    @Override
+    protected Object convertPayload(Message<?> message) {
+        return message.getPayload();
     }
 }

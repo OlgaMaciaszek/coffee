@@ -1,14 +1,10 @@
 package io.spring.barcelona.coffee.barista.coffee;
 
-import java.util.Map;
-
 import io.spring.barcelona.coffee.barista.exceptions.CoffeeNotAvailableException;
 
-import static io.spring.barcelona.coffee.barista.coffee.Coffee.aeroPress;
-import static io.spring.barcelona.coffee.barista.coffee.Coffee.cappuccino;
-import static io.spring.barcelona.coffee.barista.coffee.Coffee.espresso;
-import static io.spring.barcelona.coffee.barista.coffee.Coffee.latte;
-import static io.spring.barcelona.coffee.barista.coffee.Coffee.v60;
+import java.util.Map;
+
+import static io.spring.barcelona.coffee.barista.coffee.Coffee.*;
 
 /**
  * @author Olga Maciaszek-Sharma

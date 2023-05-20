@@ -1,12 +1,11 @@
 package io.spring.barcelona.coffee.barista.service;
 
-import java.util.Locale;
-import java.util.stream.IntStream;
-
 import io.spring.barcelona.coffee.barista.coffee.Coffees;
 import io.spring.barcelona.coffee.barista.orders.Order;
-
 import org.springframework.stereotype.Service;
+
+import java.util.Locale;
+import java.util.stream.IntStream;
 
 /**
  * @author Olga Maciaszek-Sharma

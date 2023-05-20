@@ -3,9 +3,7 @@ package io.spring.barcelona.coffee.waiter;
 import io.restassured.RestAssured;
 import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.specification.RequestSpecification;
-import org.apache.kafka.clients.CommonClientConfigs;
 import org.apache.kafka.clients.producer.ProducerConfig;
-import org.apache.kafka.common.serialization.Serializer;
 import org.apache.kafka.common.serialization.StringSerializer;
 import org.awaitility.Awaitility;
 import org.junit.jupiter.api.BeforeEach;
@@ -30,7 +28,6 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.kafka.core.DefaultKafkaProducerFactory;
 import org.springframework.kafka.core.KafkaTemplate;
-import org.springframework.kafka.core.ProducerFactory;
 import org.springframework.kafka.support.KafkaHeaders;
 import org.springframework.kafka.support.converter.JsonMessageConverter;
 import org.springframework.messaging.Message;
@@ -45,8 +42,10 @@ import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, classes = {TestConfig.class, WaiterApplication.class, ContainersConfig.class})
-@AutoConfigureStubRunner(ids = "io.spring.barcelona:barista", stubsMode = StubRunnerProperties.StubsMode.LOCAL)
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
+        classes = {WaiterApplicationIntegrationTests.TestConfig.class, WaiterApplication.class, ContainersConfig.class})
+@AutoConfigureStubRunner(ids = "io.spring.barcelona:barista",
+        stubsMode = StubRunnerProperties.StubsMode.LOCAL)
 @ActiveProfiles("integration")
 @ExtendWith(OutputCaptureExtension.class)
 class WaiterApplicationIntegrationTests {
@@ -93,44 +92,46 @@ class WaiterApplicationIntegrationTests {
                 .build();
     }
 
-}
-
-@Configuration
-class TestConfig {
+    @Configuration
+    static class TestConfig {
 
 
-    @Bean
-    MessageVerifierSender<Message<?>> standaloneMessageVerifier(KafkaTemplate kafkaTemplate, KafkaProperties properties, KafkaConnectionDetails connectionDetails) {
-        return new MessageVerifierSender<>() {
+        @Bean
+        MessageVerifierSender<Message<?>> standaloneMessageVerifier(KafkaProperties properties, KafkaConnectionDetails connectionDetails) {
+            return new MessageVerifierSender<>() {
 
-            @Override
-            public void send(Message<?> message, String destination, @Nullable YamlContract contract) {
-            }
+                @Override
+                public void send(Message<?> message, String destination, @Nullable YamlContract contract) {
+                }
 
-            @Override
-            public <T> void send(T payload, Map<String, Object> headers, String destination, @Nullable YamlContract contract) {
-                Map<String, Object> newHeaders = headers != null ? new HashMap<>(headers) : new HashMap<>();
-                newHeaders.put(KafkaHeaders.TOPIC, destination);
-                Map map = properties.buildProducerProperties();
-                applyKafkaConnectionDetailsForProducer(map, connectionDetails);
-                DefaultKafkaProducerFactory factory = new DefaultKafkaProducerFactory(map, new StringSerializer(), new StringSerializer());
-                KafkaTemplate kafkaTemplate = new KafkaTemplate(factory);
-                kafkaTemplate.send(MessageBuilder.createMessage(payload, new MessageHeaders(newHeaders)));
-            }
+                @Override
+                public <T> void send(T payload, Map<String, Object> headers, String destination, @Nullable YamlContract contract) {
+                    Map<String, Object> newHeaders = headers != null ? new HashMap<>(headers) : new HashMap<>();
+                    newHeaders.put(KafkaHeaders.TOPIC, destination);
+                    Map<String, Object> map = properties.buildProducerProperties();
+                    applyKafkaConnectionDetailsForProducer(map, connectionDetails);
+                    DefaultKafkaProducerFactory<?, ?> factory = new DefaultKafkaProducerFactory<>(map, new StringSerializer(), new StringSerializer());
+                    KafkaTemplate<?, ?> kafkaTemplate = new KafkaTemplate<>(factory);
+                    kafkaTemplate.send(MessageBuilder.createMessage(payload, new MessageHeaders(newHeaders)));
+                }
 
-            private void applyKafkaConnectionDetailsForProducer(Map<String, Object> properties,
-                                                                KafkaConnectionDetails connectionDetails) {
-                properties.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, connectionDetails.getProducerBootstrapServers());
-            }
-        };
+                private void applyKafkaConnectionDetailsForProducer(Map<String, Object> properties,
+                                                                    KafkaConnectionDetails connectionDetails) {
+                    properties.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, connectionDetails.getProducerBootstrapServers());
+                }
+            };
+        }
+
+        @Bean
+        @Primary
+        JsonMessageConverter noopMessageConverter() {
+            return new NoopJsonMessageConverter();
+        }
     }
 
-    @Bean
-    @Primary
-    JsonMessageConverter noopMessageConverter() {
-        return new NoopJsonMessageConverter();
-    }
+
 }
+
 
 class NoopJsonMessageConverter extends JsonMessageConverter {
 

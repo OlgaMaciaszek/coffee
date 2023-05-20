@@ -1,8 +1,8 @@
 package io.spring.barcelona.coffee.waiter.service;
 
-import java.util.UUID;
-
 import io.spring.barcelona.coffee.waiter.coffee.Coffee;
+
+import java.util.UUID;
 
 /**
  * @author Olga Maciaszek-Sharma
