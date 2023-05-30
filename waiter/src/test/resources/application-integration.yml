@@ -2,8 +2,6 @@ spring:
   lifecycle:
     timeout-per-shutdown-phase: 1s
   kafka:
-    producer:
-      value-serializer: org.apache.kafka.common.serialization.StringSerializer
     consumer:
       properties:
         "key.serializer": "org.springframework.kafka.support.serializer.JsonSerializer"

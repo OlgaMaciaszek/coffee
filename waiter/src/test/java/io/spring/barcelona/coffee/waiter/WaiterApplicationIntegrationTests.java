@@ -40,6 +40,7 @@ import java.time.Duration;
 import java.util.HashMap;
 import java.util.Map;
 
+import static io.restassured.RestAssured.given;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
@@ -55,6 +56,12 @@ class WaiterApplicationIntegrationTests {
 
     @Test
     void shouldProcessServing(CapturedOutput output) {
+        given(requestSpecification)
+                .pathParam("order", "V60")
+                .pathParam("count", "60")
+                .when().get("/order/{order}/{count}")
+                .then().statusCode(201);
+
         trigger.trigger("serving");
 
         Awaitility.await().atMost(Duration.ofSeconds(10))
