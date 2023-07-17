@@ -1,3 +1,5 @@
+[![Project Map](https://sourcespy.com/shield.svg)](https://sourcespy.com/github/olgamaciaszekcoffee/)
+
 # Coffee Demo App
 
 Both apps are producers and consumers at the same time, but for the purposes of the demo, producer side contract testing is set up for `barista` module and consumer-side contract testing is set up for `waiter` module.
