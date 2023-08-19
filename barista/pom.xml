@@ -6,7 +6,7 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>3.1.0</version>
+		<version>3.1.2</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>io.spring.barcelona</groupId>
@@ -16,8 +16,8 @@
 	<description>barista</description>
 	<properties>
 		<java.version>17</java.version>
-		<spring-cloud.version>2022.0.2</spring-cloud.version>
-		<testcontainers.version>1.17.6</testcontainers.version>
+		<spring-cloud.version>2022.0.4</spring-cloud.version>
+		<testcontainers.version>1.18.3</testcontainers.version>
 		<spring-cloud-contract-maven-plugin.version>4.0.2
 		</spring-cloud-contract-maven-plugin.version>
 	</properties>
